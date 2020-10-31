@@ -1,12 +1,11 @@
 import http from "./httpService";
-import { baseUrl } from "../config/config.json";
 
 function movieUrl(movieId) {
-  return `${baseUrl}/movies/${movieId}`;
+  return `/movies/${movieId}`;
 }
 
 export function getMovies() {
-  return http.get(`${baseUrl}/movies`);
+  return http.get(`/movies`);
 }
 
 export function getMovie(movieId) {
@@ -24,5 +23,5 @@ export async function saveMovie(movie) {
     delete body._id;
     return http.put(movieUrl(movie._id), body);
   }
-  return http.post(`${baseUrl}/movies`, movie);
+  return http.post(`/movies`, movie);
 }
