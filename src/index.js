@@ -10,6 +10,8 @@ import logger from "./services/logService";
 
 logger.init();
 
+console.log("SUPERMAN", process.env.REACT_APP_NAME);
+
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>

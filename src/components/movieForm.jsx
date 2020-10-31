@@ -14,7 +14,7 @@ export default class MovieForm extends Form {
       title: "",
       genreId: "",
       numberInStock: "",
-      rate: "",
+      dailyRentalRate: "",
     },
     errors: {},
     genres: [],
@@ -30,28 +30,39 @@ export default class MovieForm extends Form {
       .min(0)
       .max(100)
       .label("Number in Stock"),
-    rate: Joi.number().required().min(0).max(10).label("Rate"),
+    dailyRentalRate: Joi.number().required().min(0).max(10).label("Rate"),
   };
 
-  async componentDidMount() {
+  async populateGenres() {
+    try {
+      const movieId = this.props.match.params.id;
+      if (movieId === "new") return;
+      const { data: movie } = await getMovie(movieId);
+      this.setState({ data: this.mapToViewModel(movie) });
+    } catch (ex) {
+      if (ex.response && ex.response.status === 404) {
+        this.props.history.replace("/not-found");
+      }
+    }
+  }
+
+  async populateMovie() {
     const { data: genres } = await getGenres();
     this.setState({ genres });
+  }
 
-    const movieId = this.props.match.params.id;
-    if (movieId === "new") return;
-
-    const { data: movie } = await getMovie(movieId);
-    if (!movie) return this.props.history.replace("/not-found");
-    this.setState({ data: this.mapToViewModel(movie) });
+  async componentDidMount() {
+    this.populateMovie();
+    this.populateGenres();
   }
 
   mapToViewModel(movie) {
     return {
-      _id: movie.id,
+      _id: movie._id,
       title: movie.title,
       genreId: movie.genre._id,
       numberInStock: movie.numberInStock,
-      rate: movie.dailyRentalRate,
+      dailyRentalRate: movie.dailyRentalRate,
     };
   }
 
@@ -77,7 +88,7 @@ export default class MovieForm extends Form {
           {this.renderInput("title", "Title")}
           {this.renderSelect("genreId", "Genre", this.state.genres)}
           {this.renderInput("numberInStock", "Number in Stock", "number")}
-          {this.renderInput("rate", "Rate", "number")}
+          {this.renderInput("dailyRentalRate", "Rate", "number")}
           {this.renderSubmitButton("Save")}
         </form>
       </div>

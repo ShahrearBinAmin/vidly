@@ -4,6 +4,7 @@ import Like from "./commons/Like";
 import Table from "./commons/Table";
 import TableBody from "./commons/TableBody";
 import TableHeader from "./commons/TableHeader";
+import auth from "../services/authService";
 
 export default class MovieTable extends Component {
   columns = [
@@ -21,18 +22,25 @@ export default class MovieTable extends Component {
         <Like liked={movie.liked} onClick={() => this.props.onLike(movie)} />
       ),
     },
-    {
-      key: "delete",
-      content: (movie) => (
-        <button
-          className="btn btn-danger btn-sm"
-          onClick={() => this.props.onDelete(movie)}
-        >
-          Delete
-        </button>
-      ),
-    },
   ];
+
+  deleteColumn = {
+    key: "delete",
+    content: (movie) => (
+      <button
+        className="btn btn-danger btn-sm"
+        onClick={() => this.props.onDelete(movie)}
+      >
+        Delete
+      </button>
+    ),
+  };
+
+  constructor(props) {
+    super(props);
+    const user = auth.getCurrentUser();
+    if (user && user.isAdmin) this.columns.push(this.deleteColumn);
+  }
 
   render() {
     const { movies, onLike, onDelete, onSort, sortColumn } = this.props;

@@ -63,6 +63,7 @@ export default class Movies extends Component {
     } catch (ex) {
       if (ex.response && ex.response.status === 404) {
         toast.error("This movie is already has been deleted");
+        console.log(this.state.movies.length, previousMovies.length);
         this.setState({ movies: previousMovies });
       }
     }
@@ -122,9 +123,11 @@ export default class Movies extends Component {
             />
           </div>
           <div className="col">
-            <Link to="/movies/new">
-              <button className="btn btn-primary m-2">New Movie</button>
-            </Link>
+            {this.props.user && (
+              <Link to="/movies/new">
+                <button className="btn btn-primary m-2">New Movie</button>
+              </Link>
+            )}
             <p>There are {totalCount} movies in the list</p>
             <SearchBox value={searchQuery} onChange={this.handleSearchQuery} />
             <MovieTable
